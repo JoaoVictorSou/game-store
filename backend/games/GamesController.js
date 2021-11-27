@@ -42,7 +42,6 @@ router.get('/game/:id', (req, res) => {
     } else {
         res.sendStatus(400)
     }
-
 })
 
 router.post('/game', (req, res) => {
@@ -65,8 +64,40 @@ router.post('/game', (req, res) => {
                 res.sendStatus(500)
             })
     } else {
-        res.statusCode = 400
         res.send(400)
+    }
+})
+
+router.delete('/game/:id', (req, res) => {
+    const id = parseInt(req.params.id)
+
+    if (!isNaN(id)) {
+        Game
+            .findByPk(id)
+            .then(game => {
+                if (game) {
+                    Game.destroy({
+                        where: {
+                            id: id
+                        }
+                    })
+                    .then(_ => {
+                        res.sendStatus(200)
+                    })
+                    .catch(err => {
+                        console.log(`[ERR] DESTROY GAME: ${err}`)
+                        res.sendStatus(500)
+                    })
+                } else {
+                    res.sendStatus(404)
+                }
+            })
+            .catch(err => {
+                console.log(`[ERR] FIND ONE TO DESTOY: ${err}`)
+                res.sendStatus(500)
+            })
+    } else {
+        res.sendStatus(400)
     }
 })
 

@@ -93,9 +93,74 @@ router.delete('/game/:id', (req, res) => {
                 }
             })
             .catch(err => {
-                console.log(`[ERR] FIND ONE TO DESTOY: ${err}`)
+                console.log(`[ERR] FIND ONE GAME TO DELETE: ${err}`)
                 res.sendStatus(500)
             })
+    } else {
+        res.sendStatus(400)
+    }
+})
+
+router.put('/game/:id', (req, res) => {
+    const id = parseInt(req.params.id)
+    const title = req.body.title
+    const year = req.body.year
+    const price = req.body.price
+
+    if (!isNaN(id)) {
+        if (title || year || price) {
+            Game.findByPk(id)
+                .then(game => {
+                    if (game) {
+                        if (title) {
+                            Game.update({
+                                title,
+                            }, {
+                                where: {
+                                id: id
+                            }})
+                            .catch(err => {
+                                console.log(`[ERR] UPDATE GAME (title): ${err}`)
+                                res.sendStatus(500)
+                            })
+                        }
+                        if (year) {
+                            Game.update({
+                                year,
+                            }, {
+                                where: {
+                                id: id
+                            }})
+                            .catch(err => {
+                                console.log(`[ERR] UPDATE GAME (year): ${err}`)
+                                res.sendStatus(500)
+                            })
+                        }
+                        if (price) {
+                            Game.update({
+                                price,
+                            }, {
+                                where: {
+                                id: id
+                            }})
+                            .catch(err => {
+                                console.log(`[ERR] UPDATE GAME (price): ${err}`)
+                                res.sendStatus(500)
+                            })
+                        }
+
+                        res.sendStatus(200)
+                    } else {
+                        res.sendStatus(404)
+                    }
+                })
+                .catch(err => {
+                    console.log(`[ERR] FIND ONE GAME TO UPDATE: ${err}`)
+                    res.sendStatus(500)
+                })
+        } else {
+            res.sendStatus(400)
+        }
     } else {
         res.sendStatus(400)
     }

@@ -16,13 +16,4 @@ const Game = connection.define('games', {
     }
 })
 
-Game
-    .sync( {force: false} )
-    .then(_ => {
-        console.log(`[SUC] CREATE GAME TABLE`)
-    })
-    .catch(err => {
-        console.log(`[ERR] CREATE GAME TABLE: ${err}`)
-    })
-
 module.exports = Game

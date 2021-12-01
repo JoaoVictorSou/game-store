@@ -1,6 +1,8 @@
 const DataTypes = require('sequelize')
 const connection = require('../database/connection')
 
+const Game = require('../games/Game')
+
 const User = connection.define('users', {
     name: {
         type: DataTypes.STRING,
@@ -13,15 +15,14 @@ const User = connection.define('users', {
     password: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    level: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
 })
 
-User.sync({force: false})
-    .then(_ => {
-        console.log(`[SUC] CREATE USER TABLE`)
-    })
-    .catch(err => {
-        console.log(`[ERR] CREATE USER TABLE: ${err}`)
-    })
+User.hasMany(Game)
+Game.belongsTo(User)
 
 module.exports = User

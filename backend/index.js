@@ -30,6 +30,23 @@ connection
         console.log(`[ERR] DATABASE AUTHENTICATE: ${err}`)
     })
 
+    User.sync({force: false})
+    .then(_ => {
+        console.log(`[SUC] CREATE USER TABLE`)
+    })
+    .catch(err => {
+        console.log(`[ERR] CREATE USER TABLE: ${err}`)
+    })
+    
+    Game
+    .sync( {force: false} )
+    .then(_ => {
+        console.log(`[SUC] CREATE GAME TABLE`)
+    })
+    .catch(err => {
+        console.log(`[ERR] CREATE GAME TABLE: ${err}`)
+    })
+
 //ROUTES
 app.post("/auth", (req, res) => {
     const {email, password} = req.body

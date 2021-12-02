@@ -6,9 +6,13 @@ const jwtSecret = require('../database/jwtSecret')
 //MODEL IMPORTS
 const User = require('./User')
 
+//MIDDLEWARE IMPORTS
+const managerRestriction = require('../middleware/managerRestriction')
+const salesmanRestriction = require('../middleware/salesmanRestriction')
+
 const router = express.Router()
 
-router.get('/users', (req, res) => {
+router.get('/users', managerRestriction, (req, res) => {
     User
         .findAll({
             attributes: [
@@ -31,7 +35,7 @@ router.get('/users', (req, res) => {
         })
 })
 
-router.get('/user/:id', (req, res) => {
+router.get('/user/:id', managerRestriction, (req, res) => {
     const id = parseInt(req.params.id)
 
     if (!isNaN(id)) {
@@ -79,7 +83,8 @@ router.post('/user', (req, res) => {
                         .create({
                             name: name,
                             email: email,
-                            password: hash
+                            password: hash,
+                            level: 3
                         })
                         .then(_ => {
                             res.sendStatus(201)
@@ -101,7 +106,7 @@ router.post('/user', (req, res) => {
     }
 })
 
-router.put('/user/:id', async (req, res) => {
+router.put('/user/:id', managerRestriction, async (req, res) => {
     const id = parseInt(req.params.id)
     const name = req.body.name
     const email = req.body.email
@@ -173,7 +178,7 @@ router.put('/user/:id', async (req, res) => {
     }
 })
 
-router.delete("/user/:id", (req, res) => {
+router.delete("/user/:id", managerRestriction, (req, res) => {
     const id = parseInt(req.params.id)
 
     if (!isNaN(id)) {
@@ -219,7 +224,8 @@ router.post('/auth', (req, res) => {
                         jwt.sign({
                             id: user.id,
                             email: user.email,
-                            name: user.name
+                            name: user.name,
+                            level: user.level
                         },
                         jwtSecret,
                         {expiresIn: '2h'},

@@ -1,15 +1,19 @@
 const jwt = require('jsonwebtoken')
 const jwtSecret = require('../database/jwtSecret')
 
-async function restriction(req, res, next) {
+async function managerRestriction(req, res, next) {
     const bearer = req.headers['authorization']
 
     if (bearer) {
         let token = bearer.split(' ')[1]
         jwt.verify(token, jwtSecret, (err, data) => {
                 if (!err) {
-                    req.user = data
-                    next()
+                    if (data.level < 2) {
+                        req.user = data
+                        next()
+                    } else {
+                        res.sendStatus(403)
+                    }
                 } else {
                     res.sendStatus(401)
                 }
@@ -17,4 +21,4 @@ async function restriction(req, res, next) {
     }
 }
 
-module.exports = restriction
+module.exports = managerRestriction

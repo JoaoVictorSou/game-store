@@ -48,49 +48,6 @@ connection
     })
 
 //ROUTES
-app.post("/auth", (req, res) => {
-    const {email, password} = req.body
-
-    if(email && password) {
-        User
-            .findOne({
-                where: {
-                    email: email
-                }
-            })
-            .then(user => {
-                if (user) {
-                    let hash = user.password
-                    let isCorrect = bcrypt.compareSync(password, hash)
-
-                    if (isCorrect) {
-                        jwt.sign({
-                            name: user.name,
-                            email: user.email,
-                            id: user.id
-                        }, JWTSecret,
-                        {
-                            expiresIn: '1h'
-                        }, (err, token) => {
-                            if (err) {
-                                console.log(`[ERR] USER AUTHENTICATE: ${err}`)
-                                res.sendStatus(500)
-                            } else {
-                                res.status(200)
-                                res.json({ token })
-                            }
-                        })
-                    } else {
-                        res.sendStatus(401)
-                    }
-                } else {
-                    res.sendStatus(404)
-                }
-            })
-    } else {
-        res.sendStatus(400)
-    }
-})
 
 //DOMANIS ROUTES
 app.use('/', gamesController)

@@ -28,6 +28,19 @@ router.get('/games', (req, res) => {
 
 router.get('/game/:id', (req, res) => {
     const id = parseInt(req.params.id)
+
+    const HATEOS = [
+        {
+            href: `http://localhost:8080/${id}`,
+            method: 'DELETE',
+            id: 'delete_game'
+        },
+        {
+            href: `http://localhost:8080/${id}`,
+            method: 'PUT',
+            id: 'edit_game'
+        }
+    ]
     
     if(!isNaN(id)) {
         Game
@@ -35,7 +48,10 @@ router.get('/game/:id', (req, res) => {
             .then(game => {
                 if (game) {
                     res.statusCode = 200
-                    res.json(game)
+                    res.json({
+                        game,
+                        _links: HATEOS
+                    })
                 } else {
                     res.sendStatus(404)
                 }

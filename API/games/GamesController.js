@@ -1,5 +1,10 @@
 const express = require('express')
+
+//MODEL IMPORTS
 const Game = require('./Game')
+
+//MIDDLEWARE IMPORTS
+const restriction = require('../middleware/restriction')
 
 const router = express.Router()
 
@@ -44,7 +49,7 @@ router.get('/game/:id', (req, res) => {
     }
 })
 
-router.post('/game', (req, res) => {
+router.post('/game', restriction, (req, res) => {
     const title = req.body.title
     const year = parseInt(req.body.year)
     const price = parseFloat(req.body.price).toFixed(2)
@@ -70,7 +75,7 @@ router.post('/game', (req, res) => {
     }
 })
 
-router.delete('/game/:id', (req, res) => {
+router.delete('/game/:id', restriction, (req, res) => {
     const id = parseInt(req.params.id)
 
     if (!isNaN(id)) {
@@ -103,7 +108,7 @@ router.delete('/game/:id', (req, res) => {
     }
 })
 
-router.put('/game/:id', (req, res) => {
+router.put('/game/:id', restriction, (req, res) => {
     const id = parseInt(req.params.id)
     const title = req.body.title
     const year = req.body.year

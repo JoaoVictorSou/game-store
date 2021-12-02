@@ -1,3 +1,3 @@
-const jwtSecret = '381jnxcjbvhksbghahscnmbknemtklkhsjgshsnvcmbfgjkjhfgurryt468iewipf~djfdskvjkxbvnbzxncvb,hektjidjjvhsdghierugufhvdgvgsdfdshvdhvjhdjvsdhncvnnvvmffngierg'
+const jwtSecret = '552210'
 
 module.exports = jwtSecret

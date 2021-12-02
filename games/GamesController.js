@@ -2,10 +2,10 @@ const express = require('express')
 
 //MODEL IMPORTS
 const Game = require('./Game')
+const User = require('../users/User')
 
 //MIDDLEWARE IMPORTS
 const salesmanRestriction = require('../middleware/salesmanRestriction')
-const User = require('../users/User')
 const managerRestriction = require('../middleware/managerRestriction')
 
 const router = express.Router()
@@ -46,35 +46,36 @@ router.get('/games', (req, res) => {
 
 router.get('/game/:id', (req, res) => {
     const id = parseInt(req.params.id)
-    const HATEAOS = [
-        {
-            href: `http://localhost:8080/game/${id}`,
-            method: 'GET',
-            id: 'self'
-        },
-        {
-            href: `http://localhost:8080/game/${id}`,
-            method: 'PUT',
-            id: 'edit_game'
-        },
-        {
-            href: `http://localhost:8080/game/${id}`,
-            method: 'DELETE',
-            id: 'delete_game'
-        },
-        {
-            href: `http://localhost:8080/game`,
-            method: 'POST',
-            id: 'create_game'
-        },
-        {
-            href: `http://localhost:8080/games`,
-            method: 'GET',
-            id: 'get_games'
-        }
-    ]
     
     if(!isNaN(id)) {
+        let HATEAOS = [
+            {
+                href: `http://localhost:8080/game/${id}`,
+                method: 'GET',
+                id: 'self'
+            },
+            {
+                href: `http://localhost:8080/game/${id}`,
+                method: 'PUT',
+                id: 'edit_game'
+            },
+            {
+                href: `http://localhost:8080/game/${id}`,
+                method: 'DELETE',
+                id: 'delete_game'
+            },
+            {
+                href: `http://localhost:8080/game`,
+                method: 'POST',
+                id: 'create_game'
+            },
+            {
+                href: `http://localhost:8080/games`,
+                method: 'GET',
+                id: 'get_games'
+            }
+        ]
+
         Game
             .findByPk(id)
             .then(game => {
@@ -101,6 +102,19 @@ router.get('/games/:userId', managerRestriction, (req, res) => {
     const userId = req.params.userId
 
     if (!isNaN(userId)) {
+        let HATEAOS = [
+            {
+                href: `http://localhost:8080/games/${userId}`,
+                method: 'GET',
+                id: 'self'
+            },
+            {
+                href: `http://localhost:8080/game`,
+                method: 'POST',
+                id: 'create_game'
+            }
+        ]
+
         User
             .findOne({
                 where: {
@@ -113,7 +127,10 @@ router.get('/games/:userId', managerRestriction, (req, res) => {
             .then(user => {
                 if (user.games.length) {
                     res.status(200)
-                    res.json(user.games)
+                    res.json({
+                        games: user.games,
+                        _links: HATEAOS
+                    })
                 } else {
                     res.sendStatus(404)
                 }

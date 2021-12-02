@@ -58,40 +58,41 @@ router.get('/users', managerRestriction, (req, res) => {
 
 router.get('/user/:id', managerRestriction, (req, res) => {
     const id = parseInt(req.params.id)
-    const HATEAOS = [
-        {
-            href: `http://localhost:8080/user/${id}`,
-            method: 'GET',
-            id: 'self'
-        },
-        {
-            href: `http://localhost:8080/user/${id}`,
-            method: 'PUT',
-            id: 'edit_user'
-        },
-        {
-            href: `http://localhost:8080/user/${id}`,
-            method: 'DELETE',
-            id: 'delete_user'
-        },
-        {
-            href: `http://localhost:8080/user`,
-            method: 'POST',
-            id: 'create_user'
-        },
-        {
-            href: `http://localhost:8080/users`,
-            method: 'GET',
-            id: 'get_users'
-        },
-        {
-            href: `http://localhost:8080/auth`,
-            method: 'POST',
-            id: 'auth'
-        }
-    ]
 
     if (!isNaN(id)) {
+        const HATEAOS = [
+            {
+                href: `http://localhost:8080/user/${id}`,
+                method: 'GET',
+                id: 'self'
+            },
+            {
+                href: `http://localhost:8080/user/${id}`,
+                method: 'PUT',
+                id: 'edit_user'
+            },
+            {
+                href: `http://localhost:8080/user/${id}`,
+                method: 'DELETE',
+                id: 'delete_user'
+            },
+            {
+                href: `http://localhost:8080/user`,
+                method: 'POST',
+                id: 'create_user'
+            },
+            {
+                href: `http://localhost:8080/users`,
+                method: 'GET',
+                id: 'get_users'
+            },
+            {
+                href: `http://localhost:8080/auth`,
+                method: 'POST',
+                id: 'auth'
+            }
+        ]
+        
         User
             .findByPk(id, {
                 attributes: [

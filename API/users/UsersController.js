@@ -112,14 +112,13 @@ router.put('/user/:id', managerRestriction, async (req, res) => {
     const email = req.body.email
     const password = req.body.password
     const level = req.body.level
-    console.log('nfound')
+
     if (!isNaN(id)) {
         if (name || email || password || level) {
             try {
                 let userById = await User.findByPk(id)
-                console.log('notfound')
+                
                 if (userById) {
-                    console.log('found')
                     if (email) {
                         let emailExistence = await User.findOne({
                             where: {
@@ -136,7 +135,20 @@ router.put('/user/:id', managerRestriction, async (req, res) => {
                                 }
                             })
                         } else {
-                            throw 'email_existence_excepcion'
+                            throw 'email_existence_Exception'
+                        }
+                    }
+                    if (level) {
+                        if (level > 1 && level < 4) {
+                            User.update({
+                                level
+                            }, {
+                                where: {
+                                    id: id
+                                }
+                            })
+                        } else {
+                            throw 'level_Exception'
                         }
                     }
                     if (name) {
@@ -160,19 +172,6 @@ router.put('/user/:id', managerRestriction, async (req, res) => {
                             }
                         })
                     }
-                    if (level) {
-                        if (level > 1 && level < 4) {
-                            User.update({
-                                level
-                            }, {
-                                where: {
-                                    id: id
-                                }
-                            })
-                        } else {
-                            throw 'level_excepcion'
-                        }
-                    }
     
                     res.sendStatus(200)
                 } else {
@@ -180,10 +179,10 @@ router.put('/user/:id', managerRestriction, async (req, res) => {
                 }
             } catch (err) {
                 switch (err) {
-                    case 'email_existence_excepcion':
+                    case 'email_existence_Exception':
                         res.sendStatus(422)
                         break
-                    case 'level_exception':
+                    case 'level_Exception':
                         res.sendStatus(400)
                         break
                     default:
@@ -192,6 +191,8 @@ router.put('/user/:id', managerRestriction, async (req, res) => {
                         break
                 }
             }
+        } else {
+            res.sendStatus(400)
         }
     } else {
         res.sendStatus(400)

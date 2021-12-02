@@ -111,13 +111,15 @@ router.put('/user/:id', managerRestriction, async (req, res) => {
     const name = req.body.name
     const email = req.body.email
     const password = req.body.password
-    
+    const level = req.body.level
+    console.log('nfound')
     if (!isNaN(id)) {
-        if (name || email || password) {
+        if (name || email || password || level) {
             try {
                 let userById = await User.findByPk(id)
-    
+                console.log('notfound')
                 if (userById) {
+                    console.log('found')
                     if (email) {
                         let emailExistence = await User.findOne({
                             where: {
@@ -158,18 +160,36 @@ router.put('/user/:id', managerRestriction, async (req, res) => {
                             }
                         })
                     }
+                    if (level) {
+                        if (level > 1 && level < 4) {
+                            User.update({
+                                level
+                            }, {
+                                where: {
+                                    id: id
+                                }
+                            })
+                        } else {
+                            throw 'level_excepcion'
+                        }
+                    }
     
                     res.sendStatus(200)
                 } else {
                     res.sendStatus(404)
                 }
             } catch (err) {
-                if (err === 'email_existence_excepcion') {
-                    console.log(`[ERR] USER UPDATE: ${err}`)
-                    res.sendStatus(422)
-                } else {
-                    console.log(`[ERR] USER UPDATE: ${err}`)
-                    res.sendStatus(500)
+                switch (err) {
+                    case 'email_existence_excepcion':
+                        res.sendStatus(422)
+                        break
+                    case 'level_exception':
+                        res.sendStatus(400)
+                        break
+                    default:
+                        console.log(`[ERR] USER UPDATE: ${err}`)
+                        res.sendStatus(500)
+                        break
                 }
             }
         }

@@ -14,6 +14,8 @@ async function clientRestriction(req, res, next) {
                     res.sendStatus(401)
                 }
             })
+    } else {
+        res.sendStatus(401)
     }
 }
 

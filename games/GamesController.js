@@ -9,12 +9,28 @@ const salesmanRestriction = require('../middleware/salesmanRestriction')
 const router = express.Router()
 
 router.get('/games', (req, res) => {
+    const HATEOAS = [
+        {
+            href: `http://localhost:8080/games`,
+            method: 'GET',
+            id: 'self'
+        },
+        {
+            href: `http://localhost:8080/game`,
+            method: 'POST',
+            id: 'create_game'
+        }
+    ]
+    
     Game
         .findAll()
         .then(games => {
             if (games.length) {
                 res.statusCode = 200
-                res.json(games)
+                res.json({
+                    games,
+                    _links: HATEOAS
+                })
             } else {
                 res.sendStatus(404)
             }
@@ -28,17 +44,31 @@ router.get('/games', (req, res) => {
 
 router.get('/game/:id', (req, res) => {
     const id = parseInt(req.params.id)
-
-    const HATEOS = [
+    const HATEAOS = [
         {
-            href: `http://localhost:8080/${id}`,
+            href: `http://localhost:8080/game/${id}`,
+            method: 'GET',
+            id: 'self'
+        },
+        {
+            href: `http://localhost:8080/game/${id}`,
+            method: 'PUT',
+            id: 'edit_game'
+        },
+        {
+            href: `http://localhost:8080/game/${id}`,
             method: 'DELETE',
             id: 'delete_game'
         },
         {
-            href: `http://localhost:8080/${id}`,
-            method: 'PUT',
-            id: 'edit_game'
+            href: `http://localhost:8080/game`,
+            method: 'POST',
+            id: 'create_game'
+        },
+        {
+            href: `http://localhost:8080/games`,
+            method: 'GET',
+            id: 'get_games'
         }
     ]
     
@@ -50,7 +80,7 @@ router.get('/game/:id', (req, res) => {
                     res.statusCode = 200
                     res.json({
                         game,
-                        _links: HATEOS
+                        _links: HATEAOS
                     })
                 } else {
                     res.sendStatus(404)

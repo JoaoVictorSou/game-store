@@ -13,6 +13,24 @@ const salesmanRestriction = require('../middleware/salesmanRestriction')
 const router = express.Router()
 
 router.get('/users', managerRestriction, (req, res) => {
+    const HATEOAS = [
+        {
+            href: `http://localhost:8080/users`,
+            method: 'GET',
+            id: 'self'
+        },
+        {
+            href: `http://localhost:8080/user`,
+            method: 'POST',
+            id: 'create_user'
+        },
+        {
+            href: `http://localhost:8080/auth`,
+            method: 'POST',
+            id: 'auth'
+        }
+    ]
+    
     User
         .findAll({
             attributes: [
@@ -24,7 +42,10 @@ router.get('/users', managerRestriction, (req, res) => {
         .then(users => {
             if (users.length) {
                 res.statusCode = 200
-                res.json(users)
+                res.json({
+                    users,
+                    _links: HATEOAS
+                })
             } else {
                 res.sendStatus(404)
             }
@@ -37,6 +58,38 @@ router.get('/users', managerRestriction, (req, res) => {
 
 router.get('/user/:id', managerRestriction, (req, res) => {
     const id = parseInt(req.params.id)
+    const HATEAOS = [
+        {
+            href: `http://localhost:8080/user/${id}`,
+            method: 'GET',
+            id: 'self'
+        },
+        {
+            href: `http://localhost:8080/user/${id}`,
+            method: 'PUT',
+            id: 'edit_user'
+        },
+        {
+            href: `http://localhost:8080/user/${id}`,
+            method: 'DELETE',
+            id: 'delete_user'
+        },
+        {
+            href: `http://localhost:8080/user`,
+            method: 'POST',
+            id: 'create_user'
+        },
+        {
+            href: `http://localhost:8080/users`,
+            method: 'GET',
+            id: 'get_users'
+        },
+        {
+            href: `http://localhost:8080/auth`,
+            method: 'POST',
+            id: 'auth'
+        }
+    ]
 
     if (!isNaN(id)) {
         User
@@ -50,7 +103,10 @@ router.get('/user/:id', managerRestriction, (req, res) => {
             .then(user => {
                 if (user) {
                     res.statusCode = 200
-                    res.json(user)
+                    res.json({
+                        user,
+                        _links: HATEAOS
+                    })
                 } else {
                     res.sendStatus(404)
                 }

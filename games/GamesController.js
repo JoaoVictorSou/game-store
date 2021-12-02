@@ -5,6 +5,8 @@ const Game = require('./Game')
 
 //MIDDLEWARE IMPORTS
 const salesmanRestriction = require('../middleware/salesmanRestriction')
+const User = require('../users/User')
+const managerRestriction = require('../middleware/managerRestriction')
 
 const router = express.Router()
 
@@ -95,11 +97,40 @@ router.get('/game/:id', (req, res) => {
     }
 })
 
+router.get('/games/:userId', managerRestriction, (req, res) => {
+    const userId = req.params.userId
+
+    if (!isNaN(userId)) {
+        User
+            .findOne({
+                where: {
+                    id: userId
+                },
+                include: {
+                    model: Game
+                }
+            })
+            .then(user => {
+                if (user.games.length) {
+                    res.status(200)
+                    res.json(user.games)
+                } else {
+                    res.sendStatus(404)
+                }
+            })
+            .catch(err => {
+                console.log(`[ERR] FIND GAMES FROM USER: ${err}`)
+            })
+    } else {
+        res.sendStatus(400)
+    }
+})
+
 router.post('/game', salesmanRestriction, (req, res) => {
     const title = req.body.title
     const year = parseInt(req.body.year)
     const price = parseFloat(req.body.price).toFixed(2)
-    const userId = req.body.userId
+    const userId = req.user.id
 
     if (title && year && price && userId) {
         Game

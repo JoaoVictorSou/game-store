@@ -1,5 +1,9 @@
 const express = require('express')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const jwtSecret = require('../database/jwtSecret')
+
+//MODEL IMPORTS
 const User = require('./User')
 
 const router = express.Router()
@@ -191,6 +195,51 @@ router.delete("/user/:id", (req, res) => {
                 } else {
                     res.sendStatus(404)
                 }
+            })
+    } else {
+        res.sendStatus(400)
+    }
+})
+
+router.post('/auth', (req, res) => {
+    const {email, password} = req.body
+
+    if (email && password) {
+        User
+            .findOne({
+                where: {
+                    email
+                }
+            })
+            .then(user => {
+                if (user) {
+                    const isCorrect = bcrypt.compareSync(password, user.password)
+
+                    if (isCorrect) {
+                        jwt.sign({
+                            id: user.id,
+                            email: user.email,
+                            name: user.name
+                        },
+                        jwtSecret,
+                        {expiresIn: '2h'},
+                        (err, token) => {
+                            if (!err) {
+                                res.json({ token })
+                            } else {
+                                console.log(`[ERR] USER AUTHENTICATE: ${err}`)
+                            }
+                        })
+                    } else {
+                        res.sendStatus(401)
+                    }
+                } else {
+                    res.sendStatus(404)
+                }
+            })
+            .catch(err => {
+                console.log(`[ERR] FIND USER TO AUTHENTICATE`)
+                res.sendStatus(500)
             })
     } else {
         res.sendStatus(400)

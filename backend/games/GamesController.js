@@ -48,13 +48,15 @@ router.post('/game', (req, res) => {
     const title = req.body.title
     const year = parseInt(req.body.year)
     const price = parseFloat(req.body.price).toFixed(2)
+    const userId = req.body.userId
 
-    if (title && year && price) {
+    if (title && year && price && userId) {
         Game
             .create({
                 title,
                 year,
-                price
+                price,
+                userId
             })
             .then(_ => {
                 res.sendStatus(201)
@@ -106,9 +108,10 @@ router.put('/game/:id', (req, res) => {
     const title = req.body.title
     const year = req.body.year
     const price = req.body.price
+    const userId = req.body.userId
 
     if (!isNaN(id)) {
-        if (title || year || price) {
+        if (title || year || price || userId) {
             Game.findByPk(id)
                 .then(game => {
                     if (game) {
@@ -145,6 +148,19 @@ router.put('/game/:id', (req, res) => {
                             }})
                             .catch(err => {
                                 console.log(`[ERR] UPDATE GAME (price): ${err}`)
+                                res.sendStatus(500)
+                            })
+                        }
+
+                        if (userId) {
+                            Game.update({
+                                userId,
+                            }, {
+                                where: {
+                                id: id
+                            }})
+                            .catch(err => {
+                                console.log(`[ERR] UPDATE GAME (userId): ${err}`)
                                 res.sendStatus(500)
                             })
                         }

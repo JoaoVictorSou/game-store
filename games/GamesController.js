@@ -16,11 +16,6 @@ router.get('/games', (req, res) => {
             href: `http://localhost:8080/games`,
             method: 'GET',
             id: 'self'
-        },
-        {
-            href: `http://localhost:8080/game`,
-            method: 'POST',
-            id: 'create_game'
         }
     ]
     

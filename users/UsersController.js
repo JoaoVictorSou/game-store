@@ -304,15 +304,15 @@ router.post('/auth', (req, res) => {
                             email: user.email,
                             name: user.name,
                             level: user.level
-                        },
-                        jwtSecret,
-                        {expiresIn: '2h'},
-                        (err, token) => {
-                            if (!err) {
-                                res.json({ token })
-                            } else {
-                                console.log(`[ERR] USER AUTHENTICATE: ${err}`)
-                            }
+                            },
+                            jwtSecret,
+                            {expiresIn: '2h'},
+                            (err, token) => {
+                                if (!err) {
+                                    res.json({ token })
+                                } else {
+                                    console.log(`[ERR] USER AUTHENTICATE: ${err}`)
+                                }
                         })
                     } else {
                         res.sendStatus(401)
